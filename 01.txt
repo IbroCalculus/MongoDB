@@ -1,0 +1,127 @@
+NOTE: MongoDB is case sensitive.
+NOTE: alternative to working within the mongodb shell, is using the mongodb compass)
+
+===== 1. WHAT IS MONGODB =====
+It is a no SQL database management system that can manage a humongous amount of data.
+It stores data as BSON (Binary JavaScript Object Notation).
+
+
+COLLECTIONS -> TABLES
+DOCUMENTS ->  ROWS OF DATA
+
+
+===== 2. RUN A MONGODB =====
+- Start mongodb shell
+- Enter 'mongosh' to enable connection
+
+-----Clear screen (cls) -------
+
+
+==== 3. SHOW LIST OF DATABASES =====
+> show dbs		(ie admin, config, local)
+
+
+
+==== 4. TO USE A DATABASE (or create a database if it does not already exist)  =====
+> use admin		(admin already exists)
+> use school	(school does not exist previously. Also, will not show up when 'show dbs' because it is empty)
+
+
+
+==== 5. CREATE A COLLECTION (table) WITHIN THE DATABASE (school database) =====
+> db.createCollection("students")		//Now, show dbs will show school database
+> db.createCollection("teachers", {capped:true, size:10000000, max:100}, {autoIndexId:false})  // size-> Max. file size, max-> maximum no. of documents(ie rows).
+
+==== 6. VIEW ALL COLLECTIONS (tables) WITHIN A DATABASE ====
+      show collections
+
+==== 6b. DROP COLLECTION ====
+> db.students.drop()		// Name of collection is students.
+
+==== 7. DROP A DATABASE ====
+While within the database (ie use school), 
+
+> db.dropDatabase()   // > show dbs will not show school among the list.
+
+
+==== 8. INSERTING DOCUMENTS (one at a time) ====
+>  use school
+>  db.students.insertOne({name:"Spongebob", age:30, gpa:3.2})	//students is the collection(table), if not exist, will create, then insert the data.
+
+
+==== 9. INSERTING DOCUMENTS (many at a time) ====
+> db.students.insertMany([{name:"Kasim", age:45, gpa:4.8},{name:"Moses", age:23, gpa:4.2},{name:"Aaron", age:31, gpa: 3.9}])
+
+
+==== 10. RETURN DOCUMENTS WITHIN A COLLECTION (table students) ====
+>  db.students.find()						// Return all documents within the collection.
+>  db.students.find({name:"Spongebob"})			// Return documents containing the name 'Spongebob'. Similar to WHERE clause in SQL.
+>  db.students.find({name:"Spongebob", age:30})
+>  db.students.find({}, {_id:false, name:true})			// Ruturns all values getting only the name, _id by default is true, hence why explicit false.
+>  db.students.find({},{_id:false, name:true, gpa:true})	// Ruturns all values getting only the name and gpa, _id by default is true, hence why explicit false.
+>  db.students.find({},{_id:false, name:true, gpa:true}).sort({name:1}).limit(3)
+
+
+==== 11 DATA TYPES =====
+- String can be either single or double quotes
+- Date (ie new Date() //Gives current date & time in UTC time zone. OR new Date("2023-01-02T00:00:00") <- Date & Time specified by user.
+- Integers, doubles, booleans, null
+- arrays (ie courses: ["Bio", "Chem"]
+- Nested documents: (ie address: {stree: "123 Fake St.", city: "Bikini Bottom", zip: 12345}
+
+
+==== 12. SORT DOCUMENTS ====
+> db.students.find().sort({name:1})		//Sort by name in ascending order.
+> db.students.find().sort({name:-1})	//Sort by name in descending order.
+
+==== 13. LIMIT ====
+> db.students.find().limit(2)				//Returns only the first 2 items based on _id
+> db.students.find().sort({age:1}).limit(3)	//
+
+
+==== 14. UPDATE DOCUMENTS (Update one) ====
+NB: Use the 'set' keyword to update or add field. Use the 'unset' to undefine/remove a field.
+
+> db.students.updateOne({name:"Spongebob"}, {$set:{fullTime:true}})	//If fullTime exists, update, else, create.
+> db.students.updateOne({_id: ObjectId("643d57295bb37c66993ae9a0")}, {$set:{name:"SpongeBobbbb"}})
+
+> db.students.find({name: "Spongebob"}, {$unset:{fullTime:""})		//Unset; remove the fullTime field.
+
+
+==== 15. UPDATE MANY ====
+> db.students.updateMany({}, {$set:{fullTime:false}})		//Add or update(if field already exists) the value of fullTime for all documents to false.
+
+
+==== 16. CHECK IF FIELD (column) EXISTS OR NOT  ====
+> db.students.updateMany({fullTime:{$exists:false}}, {$set:{fullTime:true}})		//if fullTime field does not exist, setFullTime = true;
+
+
+==== 17. DELETE DOCUMENT ====
+> db.students.deleteOne({name:"Larry"})
+
+==== 18. DELETE MANY DOCUMENT ====
+> db.students.deleteMany({fullTime:false})
+> db.students.deleteMany({registerDate:{$exists:false}})		//If registerDate field does not exist, delete the document.
+
+
+===== 19. COMPARISON OPERATORS ==========
+NB: Operators are denoted by the $ sign
+
+- a. Not equal comparison operator -
+> db.students.find({name:{$ne:"Spongebob"}})		// Return all documents where name IS NOT EQUAL Spongebob.
+
+- b. Less than & greater than -
+> db.students.find({age:{$lt:20}})				// Return all documents where age is less than 20
+> db.students.find({age:{$lte:20}})				// Return all documents where age is less than or equal 20
+
+> db.students.find({age:{$gt:20}})				// Return all documents where age is greater than 20
+> db.students.find({age:{$gte:20}})				// Return all documents where age is greater than or equal 20
+
+- C. within a certain range -
+> db.students.find({gpa:{$gte:3, $lte:4}})		// Return all documents where gpa is less than/equal 3 and greater than/equal 4
+
+- c. In and not in operator -
+> db.students.find({name:{$in:["Spongebob","Patrick","Sandy"]}})		// Returns all documents where name is either of the 3 listed in the array
+> db.students.find({name:{$nin:["Spongebob","Patrick","Sandy"]}})
+
+

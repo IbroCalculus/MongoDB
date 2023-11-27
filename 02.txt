@@ -1,0 +1,14 @@
+==== 01. Logical Operators ====
+$and, $not, $nor, $or
+
+- a. $and -
+> db.students.find({$and: [{fullTime:true},{age:{$lte:22}}]})	// Returns documents where fullTime=true and age <= 22. 
+
+- b. $or -
+> db.students.find({$or: [{fullTime:true},{age:{$lte:22}}]})	// Returns documents where fullTime=true or age <= 22.
+
+- c. $nor (Opposite of $and) -
+> db.students.find({$nor: [{fullTime:true},{age:{$lte:22}}]})	// Returns documents where fullTime != true and age !<= 22.
+
+- D. $not -
+> db.students.find({age:{$not:{$gte:30}}})
