@@ -11,8 +11,8 @@ DOCUMENTS ->  ROWS OF DATA
 
 
 ===== 2. RUN A MONGODB =====
-- Start mongodb shell
-- Enter 'mongosh' to enable connection
+- Start mongodb shell by opening cmd
+- Type 'mongosh' to enable connection
 
 -----Clear screen (cls) -------
 
@@ -53,13 +53,17 @@ While within the database (ie use school),
 > db.students.insertMany([{name:"Kasim", age:45, gpa:4.8},{name:"Moses", age:23, gpa:4.2},{name:"Aaron", age:31, gpa: 3.9}])
 
 
-==== 10. RETURN DOCUMENTS WITHIN A COLLECTION (table students) ====
+==== 10. RETURN DOCUMENTS WITHIN A COLLECTION (table students) / READ COLLECTION DOCUMENTS ====
 >  db.students.find()						// Return all documents within the collection.
+>  db.students.find().pretty()					// Format the output the output.
 >  db.students.find({name:"Spongebob"})			// Return documents containing the name 'Spongebob'. Similar to WHERE clause in SQL.
 >  db.students.find({name:"Spongebob", age:30})
->  db.students.find({}, {_id:false, name:true})			// Ruturns all values getting only the name, _id by default is true, hence why explicit false.
+>  db.students.find({}, {_id:false, name:true})			// Ruturns only name property for all values, _id by default is true, hence why explicit false.
+>  db.students.find({}, {_id:false})				// Ruturns all properties for all values, excluding the _id.
 >  db.students.find({},{_id:false, name:true, gpa:true})	// Ruturns all values getting only the name and gpa, _id by default is true, hence why explicit false.
 >  db.students.find({},{_id:false, name:true, gpa:true}).sort({name:1}).limit(3)
+
+--- For the above, the format is: .find({query}, {projection})
 
 
 ==== 11 DATA TYPES =====
@@ -69,9 +73,24 @@ While within the database (ie use school),
 - arrays (ie courses: ["Bio", "Chem"]
 - Nested documents: (ie address: {stree: "123 Fake St.", city: "Bikini Bottom", zip: 12345}
 
+--- E.g ---
+db.students.insertOne({
+	name: "Larry",
+	age:32, gpa: 2.8,
+	fullTime: false, 
+	registerDate: new Date(), 
+	dateOfBirth: new Date("1990-01-25T04:32:00"), 
+	graduationDate: null, 
+	courses: ["Biology","Physics", "Calculus"], 
+	address: {
+		street: "123 Fake Street",
+		city: "Bikini Bottom", 
+		zip:123456
+		}
+	})
 
 ==== 12. SORT DOCUMENTS ====
-> db.students.find().sort({name:1})		//Sort by name in ascending order.
+> db.students.find().sort({name:1})	//Sort by name in ascending order.
 > db.students.find().sort({name:-1})	//Sort by name in descending order.
 
 ==== 13. LIMIT ====
@@ -79,7 +98,7 @@ While within the database (ie use school),
 > db.students.find().sort({age:1}).limit(3)	//
 
 
-==== 14. UPDATE DOCUMENTS (Update one) ====
+==== 14. UPDATE DOCUMENTS (Update one). NB: The format is: .update(filter, update) ====
 NB: Use the 'set' keyword to update or add field. Use the 'unset' to undefine/remove a field.
 
 > db.students.updateOne({name:"Spongebob"}, {$set:{fullTime:true}})	//If fullTime exists, update, else, create.
@@ -96,12 +115,17 @@ NB: Use the 'set' keyword to update or add field. Use the 'unset' to undefine/re
 > db.students.updateMany({fullTime:{$exists:false}}, {$set:{fullTime:true}})		//if fullTime field does not exist, setFullTime = true;
 
 
+===== UNSET A FILED (Removing a field ) =======
+> db.students.find({name: "Spongebob"}, {$unset:{fullTime:""})		//Unset; remove the fullTime field.
+
 ==== 17. DELETE DOCUMENT ====
 > db.students.deleteOne({name:"Larry"})
 
-==== 18. DELETE MANY DOCUMENT ====
+==== 18. DELETE MANY DOCUMENT (OR EMPTY A COLLECTION) ====
 > db.students.deleteMany({fullTime:false})
 > db.students.deleteMany({registerDate:{$exists:false}})		//If registerDate field does not exist, delete the document.
+> db.students.deleteMany({})						// This empties the collection. (ie truncating a table)
+
 
 
 ===== 19. COMPARISON OPERATORS ==========
@@ -124,4 +148,14 @@ NB: Operators are denoted by the $ sign
 > db.students.find({name:{$in:["Spongebob","Patrick","Sandy"]}})		// Returns all documents where name is either of the 3 listed in the array
 > db.students.find({name:{$nin:["Spongebob","Patrick","Sandy"]}})
 
+
+===== 20. LOGICAL OPERATORS (AND, OR, NOR, NOT)  ==========
+> db.students.find({$and: [{fullTime:true},{age:{$lte:22}}]})		// return where fullTime = true, AND age <= 22
+> db.students.find({$or: [{fullTime:true},{age:{$lte:22}}]})		// return where fullTime = true, OR age <= 22
+> db.students.find({$Nor: [{fullTime:true},{age:{$lte:22}}]})		// return where fullTime != true, AND age !<= 22
+> db.students.find({age:{$not:{$gte:30}}})				// return where age NOT >= 30 
+
+
+===== 21. INDEXES =======
+Indexes support the efficient execution of queries in MongoDB
 
