@@ -1,0 +1,23 @@
+============= Installing MongoDB Server ===================
+
+- www.mongodb.com -> Products -> Community edition
+- During installation: 
+	* Complete (Other is Custom)
+	* Check (Install MongoDB as a Service)
+	* Run service as Network Service user
+	* Check: (Install MondoDB Compass)
+
+- Verify installation:
+	* Check windows 'Services' for "MongoDB Server (MongoDB)" to be running.
+
+========= ALTERNATIVELY, RUN IN FOREGROUND, NOT BACKGROUND (If you decide not to do the above method. I use and recommend the above method) ==========
+- Add to path: C:\Program Files\MongoDB\Server\8.0\bin	(check in cmd: mongod --version)
+- cmd (Admin) > mongod --dbpath "C:\Program Files\MongoDB\Server\8.0\data" --logpath "C:\Program Files\MongoDB\Server\8.0\log\mongod.log" -logappend
+
+
+=============== Two tools for interacting with MongoDB server are; Mongo Shell & MongoDB Compass ===========
+
+---- 1. Mongo shell ------
+	- Google for and install mongo shell: https://www.mongodb.com/try/download/shell
+	- In cmd > mongosh
+	- More in 01.txt

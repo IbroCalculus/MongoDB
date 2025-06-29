@@ -1,18 +1,17 @@
-NOTE: MongoDB is case sensitive.
-NOTE: alternative to working within the mongodb shell, is using the mongodb compass)
+====== RUN MONGODB WITH MONGODB COMPASS ========
+- Open mongodb compass
+- Click on 'Add new connection'
+- Give it a name or not (will give default: localhost:27017)
+- Create collections and documents as you require
+- Proceed with other commands as are below when using mongodb shell
 
-===== 1. WHAT IS MONGODB =====
-It is a no SQL database management system that can manage a humongous amount of data.
-It stores data as BSON (Binary JavaScript Object Notation).
-
-
-COLLECTIONS -> TABLES
-DOCUMENTS ->  ROWS OF DATA
+Also note that mongodb shell exists within the compass. You will find 'Open MongoDB Shell' on the top right once you click on a connection (ie localhost:27017)
+You can simply use that (which I recommend) or use it via windows cmd
 
 
 ===== 2. RUN A MONGODB =====
 - Start mongodb shell by opening cmd
-- Type 'mongosh' to enable connection
+- Type 'mongosh' to enable connection.		(Make sure already installed. Check _installation.txt if not)
 
 -----Clear screen (cls) -------
 
@@ -22,7 +21,7 @@ DOCUMENTS ->  ROWS OF DATA
 
 
 
-==== 4. TO USE A DATABASE (or create a database if it does not already exist)  =====
+==== 4. TO USE A DATABASE (or CREATE a database if it does not already exist)  =====
 > use admin		(admin already exists)
 > use school	(school does not exist previously. Also, will not show up when 'show dbs' because it is empty)
 
@@ -31,6 +30,8 @@ DOCUMENTS ->  ROWS OF DATA
 ==== 5. CREATE A COLLECTION (table) WITHIN THE DATABASE (school database) =====
 > db.createCollection("students")		//Now, show dbs will show school database
 > db.createCollection("teachers", {capped:true, size:10000000, max:100}, {autoIndexId:false})  // size-> Max. file size, max-> maximum no. of documents(ie rows).
+
+NB: 'db' is an object that references the currently selected database 
 
 ==== 6. VIEW ALL COLLECTIONS (tables) WITHIN A DATABASE ====
       show collections
@@ -54,9 +55,40 @@ While within the database (ie use school),
 
 
 ==== 10. RETURN DOCUMENTS WITHIN A COLLECTION (table students) / READ COLLECTION DOCUMENTS ====
->  db.students.find()						// Return all documents within the collection.
+
+>  db.students.find()						// Return all documents within the collection. 
+
+NB: This may not return all, 20 documents. This is due to a mongodb design to avoid overwhelming the console with too much data.
+    find() returns a cursor object, which is essentially a pointer to the result set of your query. This cursor allows you to iterate over the documents one at a time.
+    find() returns a resultset list of cursor of 20 documents each.
+
+    A cursor is a database object that lets you traverse (i.e., iterate through) the records returned by a query.
+
+ITERATING OVER A CURSOR (Option 1: Using .hasNext() and .next()):
+
+let cursor = db.students.find();
+
+while (cursor.hasNext()) {
+  let doc = cursor.next();
+  printjson(doc);
+}
+
+ITERATING OVER A CURSOR (Option 2: Using .forEach()):
+
+db.students.find().forEach(function(doc) {
+  printjson(doc);
+});
+
+ALT:
+	- db.students.find().forEach(printjson)
+
+--- Convert Cursor to Array (if not too large) ---
+let allDocs = db.students.find().toArray();
+printjson(allDocs);
+
+
 >  db.students.find().pretty()					// Format the output the output.
->  db.students.find({name:"Spongebob"})			// Return documents containing the name 'Spongebob'. Similar to WHERE clause in SQL.
+>  db.students.find({name:"Spongebob"})				// Return documents containing the name 'Spongebob'. Similar to WHERE clause in SQL.
 >  db.students.find({name:"Spongebob", age:30})
 >  db.students.find({}, {_id:false, name:true})			// Ruturns only name property for all values, _id by default is true, hence why explicit false.
 >  db.students.find({}, {_id:false})				// Ruturns all properties for all values, excluding the _id.
