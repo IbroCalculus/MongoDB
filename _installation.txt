@@ -18,6 +18,34 @@
 =============== Two tools for interacting with MongoDB server are; Mongo Shell & MongoDB Compass ===========
 
 ---- 1. Mongo shell ------
-	- Google for and install mongo shell: https://www.mongodb.com/try/download/shell
+	- Google for and install mongodb shell: https://www.mongodb.com/try/download/shell
 	- In cmd > mongosh
 	- More in 01.txt
+
+
+
+=============== MONGODB ATLAS ===========
+Alternative to using the system installed mongodb server, you can use the cloud hosted known as Atlas.
+
+- Googe search mongodb atlas and login: https://account.mongodb.com/account/login?nds=true
+- Create a project and give it a name, ie; "Express Demo Database", Next and Create Project
+- Click Create Cluster button:
+	- Choose the free server
+	- Give cluster name or leave as default, 'Cluster0'
+	- Choose any cloud provider. (I chose Google Cloud)
+	- Choose region (Or leave as default)
+	- Click "Create Deployment" button
+	- Give username and password, ie root, Abcd1234
+	- Create Database user
+	- Click "Choose a Connection Method"
+		NB: Henceforth below, it is in relation to working with Express JS
+	- Select 'Drivers'
+	- Dropdown Driver: 'Mongoose', Version: Latest (i.e 7.0) or later
+	- npm install mongoose
+	- Copy the connection string (Check Show Password), ie:
+		mongodb+srv://admin:Admin123@cluster0.7kmpciu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+	- Done
+	- Go to 'Network Access' on the left navigation section
+	- An IP Address is given. (This means that you can access the database ONLY from that IP Address, which is not okay)
+	- Click on Edit button, Click on "ALLOW ACCESS FROM ANYWHERE" and Confirm. Now we can easily access it.
+
